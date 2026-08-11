@@ -1,0 +1,74 @@
+name: Build Arul GPS Camera APK
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.32.x"
+          channel: stable
+
+      - name: Generate Android project files
+        run: |
+          # The repo tracks only lib/, assets/ and the AndroidManifest.
+          # Everything else (gradle wrapper, MainActivity, res/) is generated
+          # here, so the repo stays small and Flutter-version independent.
+          flutter create --platforms=android \
+            --org com.arulsundaresan \
+            --project-name arul_gps_camera \
+            _scaffold
+          mkdir -p android
+          rsync -a --ignore-existing _scaffold/android/ android/
+          rm -rf _scaffold
+          rm -f lib/main.dart.bak
+
+      - name: Set minSdk to 23
+        run: |
+          F=android/app/build.gradle.kts
+          if [ -f "$F" ]; then
+            sed -i 's/minSdk = flutter.minSdkVersion/minSdk = 23/' "$F"
+          else
+            sed -i 's/minSdkVersion flutter.minSdkVersion/minSdkVersion 23/' android/app/build.gradle
+          fi
+
+      - name: Install packages
+        run: flutter pub get
+
+      - name: Generate launcher icons
+        run: dart run flutter_launcher_icons
+
+      - name: Analyze
+        run: flutter analyze --no-fatal-infos --no-fatal-warnings
+
+      - name: Build release APK
+        run: flutter build apk --release
+
+      - name: Rename APK
+        run: |
+          mkdir -p out
+          cp build/app/outputs/flutter-apk/app-release.apk \
+             out/ArulGPSCamera-v1.1.apk
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: ArulGPSCamera-v1.1-apk
+          path: out/ArulGPSCamera-v1.1.apk
+          retention-days: 30

@@ -1,0 +1,53 @@
+name: arul_gps_camera
+description: Arul GPS Camera - photos stamped with location, address, time and bearing.
+publish_to: "none"
+version: 1.1.0+3
+
+environment:
+  sdk: ">=3.3.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  camera: ^0.11.0
+  geolocator: ^13.0.2
+  geocoding: ^3.0.0
+  sensors_plus: ^6.0.0
+  image: ^4.3.0
+  http: ^1.2.2
+  shared_preferences: ^2.3.3
+  path_provider: ^2.1.5
+  path: ^1.9.0
+  share_plus: ^10.1.2
+  gal: ^2.3.0
+  intl: ^0.19.0
+  qr: ^3.0.2
+  permission_handler: ^11.3.1
+
+dev_dependencies:
+  flutter_lints: ^4.0.0
+  flutter_launcher_icons: ^0.14.1
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/logo/
+
+  fonts:
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/Inter-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Inter-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Inter-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Inter-Bold.ttf
+          weight: 700
+
+flutter_launcher_icons:
+  android: true
+  ios: false
+  image_path: "assets/logo/arul_logo_512.png"
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/logo/arul_logo_foreground.png"
